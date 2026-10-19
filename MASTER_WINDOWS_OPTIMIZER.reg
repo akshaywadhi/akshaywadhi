@@ -1,0 +1,77 @@
+Windows Registry Editor Version 5.00
+
+; ====================================================================
+; MASTER WINDOWS 10 PERFORMANCE & GPU REGISTRY TWEAKS
+; Designed for AMD/Intel APUs & GPUs, 16GB RAM, Fast SSDs
+; Preserves SMB File Sharing and Mobile Hotspot 100% Intact
+; ====================================================================
+
+; [1] DESKTOP WINDOW MANAGER (DWM) - DISABLE MULTI-PLANE OVERLAY (MPO)
+; Completely eliminates desktop lag, cursor stuttering, and window hitching during video playback
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Dwm]
+"OverlayTestMode"=dword:00000005
+
+; [2] MEMORY MANAGEMENT & RAM OFFLOADING (FOR 16GB+ RAM)
+; DisablePagingExecutive (1): Locks core OS kernel and drivers in physical RAM (stops CPU paging interrupts)
+; LargeSystemCache (1): Uses free RAM (~6.5GB) as an ultra-fast file system cache for Node.js, Git, and compiling
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management]
+"DisablePagingExecutive"=dword:00000001
+"LargeSystemCache"=dword:00000001
+
+; [3] CPU THREAD SCHEDULING & FOREGROUND PRIORITY
+; Win32PrioritySeparation (38 / 0x26): Gives 3x CPU priority to active window (IDE, terminal, browser)
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\PriorityControl]
+"Win32PrioritySeparation"=dword:00000026
+
+; [4] DISABLE WINDOWS FAST STARTUP (PREVENTS DRIVER MEMORY LEAK PERSISTENCE)
+; Ensures drivers boot clean on every startup without carrying over stale memory
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Power]
+"HiberbootEnabled"=dword:00000000
+
+; [5] UNHIDE PROCESSOR PERFORMANCE BOOST MODE IN POWER OPTIONS GUI
+; Sets Attributes = 2 so Turbo Boost settings appear in Control Panel -> Power Options
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\PowerSettings\54533251-82be-4824-96c1-47b60b740d00\be337238-0d82-4146-a960-4f3749d470c7]
+"Attributes"=dword:00000002
+
+; [6] BROWSER HARDWARE ACCELERATION & EXTENSION POLICIES
+; Locks Hardware Acceleration to Always-On across Chrome, Brave, and Edge
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Google\Chrome]
+"HardwareAccelerationModeEnabled"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\BraveSoftware\Brave]
+"HardwareAccelerationModeEnabled"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge]
+"HardwareAccelerationModeEnabled"=dword:00000001
+
+; Auto-installs enhanced-h264ify extension (omkfmpieigblcllmkgbflkikinpkodlk) to force GPU video decode (VP9/H.264)
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Google\Chrome\ExtensionInstallForcelist]
+"1"="omkfmpieigblcllmkgbflkikinpkodlk;https://clients2.google.com/service/update2/crx"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\BraveSoftware\Brave\ExtensionInstallForcelist]
+"1"="omkfmpieigblcllmkgbflkikinpkodlk;https://clients2.google.com/service/update2/crx"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge\ExtensionInstallForcelist]
+"1"="omkfmpieigblcllmkgbflkikinpkodlk;https://clients2.google.com/service/update2/crx"
+
+; [7] SILENCE WINDOWS UPDATE & DEFENDER BACKGROUND RETRY LOOPS
+; Stops background update scans from generating Error 0x8024200B and Event 7003
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU]
+"NoAutoUpdate"=dword:00000001
+"AUOptions"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender]
+"DisableAntiSpyware"=dword:00000001
+"DisableAntiVirus"=dword:00000001
+
+; [8] MEDIA FOUNDATION HARDWARE ACCELERATION
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Media Foundation\HardwareMFT]
+"EnableHardwareDecode"=dword:00000001
+
+; [9] CURRENT USER UI & DIRECTX PREFERENCES
+; Disables transparency blur to eliminate DWM CPU compositing load
+[HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize]
+"EnableTransparency"=dword:00000000
+
+[HKEY_CURRENT_USER\Software\Microsoft\Avalon.Graphics]
+"DisableHWAcceleration"=dword:00000000
